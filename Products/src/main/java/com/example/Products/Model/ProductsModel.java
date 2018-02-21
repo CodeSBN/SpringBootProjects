@@ -1,5 +1,7 @@
 package com.example.Products.Model;
-
+/*
+ * Author:Soham Banerjee
+ */
 import java.io.Serializable;
 import java.util.Date;
 
@@ -23,7 +25,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Table(name="Products_data")
 //Auto populate create and update entry for the Model
 @EntityListeners(AuditingEntityListener.class)
-
 //Allowing only in response ignoring these properties from request
 @JsonIgnoreProperties(value={"createdAt","UpdatedAT"},allowGetters=true)
 public class ProductsModel implements Serializable {
