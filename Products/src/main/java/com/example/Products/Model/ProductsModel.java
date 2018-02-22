@@ -5,12 +5,16 @@ package com.example.Products.Model;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -21,6 +25,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 @Entity
 @Table(name="Products_data")
 //Auto populate create and update entry for the Model
@@ -45,10 +50,23 @@ public class ProductsModel implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)//used for date object to covert to equivalant database type and reverse
 	@CreatedDate
 	private Date createdAt;
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 	@LastModifiedDate
 	private Date updatedAt;
 	
+	@ManyToOne(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
+	@JoinColumn(name="category_id",nullable=false)
+	@JsonManagedReference
+	private CategoryModel category;
 	
+	public CategoryModel getCategory() {
+		return category;
+	}
+	public void setCategory(CategoryModel category) {
+		this.category = category;
+	}
 	public long getProductId() {
 		return productId;
 	}

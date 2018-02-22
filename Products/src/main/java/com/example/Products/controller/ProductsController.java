@@ -7,6 +7,7 @@ package com.example.Products.controller;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.Products.Model.CategoryModel;
 import com.example.Products.Model.ProductsModel;
+import com.example.Products.repository.CategoryRepository;
 import com.example.Products.repository.ProductsRepository;
 
 @RestController
@@ -27,7 +30,26 @@ import com.example.Products.repository.ProductsRepository;
 public class ProductsController {
 	@Autowired
 	ProductsRepository repository;
-
+	
+	@Autowired
+	CategoryRepository cat;
+	
+	
+	@GetMapping("/categories")
+	
+	public List<CategoryModel> getAllCategories(){
+		return cat.findAll();
+	}
+	
+	@PostMapping("/newCategory")
+	
+	public CategoryModel newCategory(@RequestBody CategoryModel category){
+		
+		return cat.save(category);
+	}
+	
+	
+	
 	// Get All Products API
 	@GetMapping("/products")
 	public List<ProductsModel> getAllProducts() {
@@ -37,11 +59,29 @@ public class ProductsController {
 	}
 
 	// Create a new Product date
-	// @valid to check valid reqeust cause we have used @NotBlank check at data
+	// @valid to check valid request cause we have used @NotBlank check at data
 	// model
-	@PostMapping("/new")
-	public ProductsModel createProduct(@Valid @RequestBody ProductsModel product) {
-		return repository.save(product);
+	
+	/*
+	 * Requires changes for getting category by Name and save Product entity 
+	 * change Request number 1
+	 */
+	@PostMapping("/new/{name}")
+	public ResponseEntity<ProductsModel> createProduct(@PathParam("name") String search ,
+											@RequestBody ProductsModel product) {
+		
+		System.out.println("New Product method invoked");
+		
+		CategoryModel category=cat.findBycategoryName(search);
+		
+		//System.out.println(category.getCategoryId());
+		
+		if(category==null){
+			return ResponseEntity.notFound().build();
+		}
+		product.setCategory(category);
+		
+		return ResponseEntity.ok().body(product);
 	}
 
 	// Get a Single product API
